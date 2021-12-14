@@ -1,0 +1,32 @@
+.page-wrapper {
+  width: 100vw;
+  height: 100vh;
+  font-size: 22px;
+  overflow: hidden;
+  display: flex;
+}
+
+.information {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  font-weight: bold;
+  border: 3px solid #f1f1f1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 50%;
+  padding: 10vh;
+  text-align: center;
+}
+
+.add-button {
+  font-size: 1.5rem;
+  margin-top: 5vh;
+  padding: 2vh 2vw;
+}
+
+.error-input {
+  border-color: red;
+}

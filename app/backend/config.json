@@ -1,0 +1,6 @@
+{
+  "listeningHosts": "0.0.0.0",
+  "serverHost": "localhost",
+  "serverPort": 80,
+  "frontendFolder": "../frontend/build"
+}
