@@ -1,14 +1,14 @@
 import React, {FC, useState} from 'react';
 import './main-page.scss';
-import {Button, Form, Modal} from "react-bootstrap";
-import NavBar from "../../components/navbar/navbar";
-import Background from "../../components/background/background";
-import {AppAction} from "../../redux/reducers/app-reducer/app-reducer.interfaces";
-import {connect} from "react-redux";
-import {Dispatch} from "redux";
-import {AppState, CarRecord} from "../../entitites/app/app.interfaces";
-import {MainPageProps} from "../../entitites/main-page/main-page.interfaces";
-import {addCarRecord} from "../../redux/actions/app-actions";
+import {Button, Form, Modal} from 'react-bootstrap';
+import NavBar from '../../components/navbar/navbar';
+import AppBackground from '../../components/app-background/app-background';
+import {AppAction} from '../../redux/reducers/app-reducer/app-reducer.interfaces';
+import {connect} from 'react-redux';
+import {Dispatch} from 'redux';
+import {AppState, Record} from '../../entitites/app/app.interfaces';
+import {MainPageProps} from '../../entitites/main-page/main-page.interfaces';
+import {addCarRecord} from '../../redux/actions/app-actions';
 
 const MainPage: FC<MainPageProps> = props => {
     const [date, setDate] = useState('');
@@ -56,25 +56,23 @@ const MainPage: FC<MainPageProps> = props => {
         let model = (document.querySelector('#car-model') as HTMLInputElement).value;
 
         if (isValidForm(model, name, time)) {
-            props.onAddRecord({ownerName: name, ownerPhone: phone, date: date, time: time, carModel: model} as CarRecord);
+            props.onAddRecord({ownerName: name, ownerPhone: phone, date: date, time: time, carModel: model} as Record);
             setPhone('');
             setPopupShow(false);
         }
     }
 
-    function normalizePhoneInput(value: string, previousValue: string): string | undefined {
+    function normalizePhoneInput(value: string) {
         if (!value) return value;
         const currentValue = value.replace(/[^\d]/g, '');
 
-        if (!previousValue || value.length > previousValue.length) {
-            if (currentValue.length < 4) return currentValue;
-            if (currentValue.length < 7) return `(${currentValue.slice(0, 3)}) ${currentValue.slice(3)}`;
-            return `(${currentValue.slice(0, 3)}) ${currentValue.slice(3, 6)}-${currentValue.slice(6, 10)}`;
-        }
+        if (currentValue.length < 4) return currentValue;
+        if (currentValue.length < 7) return `(${currentValue.slice(0, 3)}) ${currentValue.slice(3)}`;
+        return `(${currentValue.slice(0, 3)}) ${currentValue.slice(3, 6)}-${currentValue.slice(6, 10)}`;
     }
 
     function handlePhoneInput(event: React.SyntheticEvent): void {
-        setPhone(normalizePhoneInput((event.target as HTMLInputElement).value, phone) as string);
+        setPhone(normalizePhoneInput((event.target as HTMLInputElement).value) as string);
     }
 
     function setAvailableTime(event: React.SyntheticEvent): void {
@@ -83,44 +81,62 @@ const MainPage: FC<MainPageProps> = props => {
     }
 
     function renderTimeOptions(): JSX.Element[] {
-        let options = props.days[date];
+        let options = props.schedule[date];
         return (options || []).map((time, ind) => <option value={time} key={ind}>{time}</option>);
     }
 
     function handleAddButtonClick(): void {
-        let today = new Date();
-        setMinDate(today.toLocaleDateString("sv"));
+        let scheduleDay = new Date();
+        const currentTimeHour: number = +scheduleDay.toTimeString().split(' ')[0].split(':')[0];
+
+        if (currentTimeHour > 18) {
+            scheduleDay.setDate(scheduleDay.getDate() + 1);
+        }
+        setMinDate(scheduleDay.toLocaleDateString('sv'));
+        scheduleDay.setDate(scheduleDay.getDate() + 6);
+        setMaxDate(scheduleDay.toLocaleDateString('sv'));
+
+        scheduleDay = new Date();
+        if (currentTimeHour > 18) {
+            scheduleDay.setDate(scheduleDay.getDate() + 1);
+        }
+
         let i = 0;
-        for (let day in props.days) {
-            if (props.days[day].length !== 0) {
-                today.setDate(today.getDate() + i);
-                setDate(today.toLocaleDateString("sv"));
+        for (let day in props.schedule) {
+            if (props.schedule[day].length !== 0) {
+                scheduleDay.setDate(scheduleDay.getDate() + i);
+                setDate(scheduleDay.toLocaleDateString('sv'));
                 break;
             }
             i++;
         }
-        today.setDate(new Date().getDate() + 6);
-        setMaxDate(today.toLocaleDateString("sv"));
+
         setPopupShow(true);
+    }
+
+    function handleModalClose() {
+        setPopupShow(false);
+        setPhone('');
     }
 
     return (
         <div className='page-wrapper'>
-            <Background />
+            <AppBackground />
             <NavBar activePage='main' />
 
             <div className='information'>
                 <h1>Запись в очередь на ТО</h1>
-                <Button className='add-button' variant="light" onClick={handleAddButtonClick}>Добавить машину</Button>
+                <Button className='add-button' variant='light' onClick={handleAddButtonClick}>Добавить машину</Button>
             </div>
 
             <Modal show={popupShow}
-                   onHide={() => setPopupShow(false)}
-                   size="lg"
-                   aria-labelledby="contained-modal-title-vcenter"
+                   onHide={handleModalClose}
+                   size='lg'
+                   backdrop='static'
+                   aria-labelledby='contained-modal-title-vcenter'
                    centered>
                 <Modal.Header closeButton>
-                    <Modal.Title id="contained-modal-title-vcenter">
+                    <Modal.Title id='contained-modal-title-vcenter'>
                         Запись в очередь
                     </Modal.Title>
                 </Modal.Header>
@@ -128,31 +144,31 @@ const MainPage: FC<MainPageProps> = props => {
                 <Modal.Body>
                     <Form>
 
-                        <Form.Group className="mb-3" controlId="name">
-                            <Form.Label column>ФИО владельца</Form.Label>
-                            <Form.Control type="text" placeholder="Иванов И.И." required />
+                        <Form.Group className='mb-3' controlId='name'>
+                            <Form.Label column>ФИО владельца*</Form.Label>
+                            <Form.Control type='text' placeholder='Иванов И.И.' required />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="phone">
-                            <Form.Label column>Номер телефона владельца</Form.Label>
-                            <Form.Control type="tel" placeholder="(xxx) xxx-xxxx" value={phone} onChange={handlePhoneInput} required />
+                        <Form.Group className='mb-3' controlId='phone'>
+                            <Form.Label column>Номер телефона владельца*</Form.Label>
+                            <Form.Control type='tel' placeholder='(xxx) xxx-xxxx' value={phone} onChange={handlePhoneInput} required />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="date">
+                        <Form.Group className='mb-3' controlId='date'>
                             <Form.Label column>Дата ТО</Form.Label>
-                            <Form.Control type="date" value={date} min={minDate} max={maxDate} onChange={setAvailableTime} required />
+                            <Form.Control type='date' value={date} min={minDate} max={maxDate} onChange={setAvailableTime} required />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="time">
+                        <Form.Group className='mb-3' controlId='time'>
                             <Form.Label column>Время ТО</Form.Label>
                             <Form.Select>
                                 {date !== '' ? renderTimeOptions() : null}
                             </Form.Select>
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="car-model">
-                            <Form.Label column>Марка машины</Form.Label>
-                            <Form.Control type="text" placeholder='Opel Astra' required />
+                        <Form.Group className='mb-3' controlId='car-model'>
+                            <Form.Label column>Марка машины*</Form.Label>
+                            <Form.Control type='text' placeholder='Opel Astra' required />
                         </Form.Group>
 
                         <Button type='submit' onClick={addCarToQueue}>Добавить</Button>
@@ -166,14 +182,14 @@ const MainPage: FC<MainPageProps> = props => {
 
 function mapStateToProps(state: AppState) {
     return {
-        days: state.appReducer.days,
-        activeQueue: state.appReducer.activeQueue,
+        schedule: state.appReducer.schedule,
+        activeRecords: state.appReducer.activeRecords,
     }
 }
 
 function mapDispatchToProps(dispatch: Dispatch<AppAction>) {
     return {
-        onAddRecord: (newRecord: CarRecord) => dispatch(addCarRecord(newRecord))
+        onAddRecord: (newRecord: Record) => dispatch(addCarRecord(newRecord))
     }
 }
 

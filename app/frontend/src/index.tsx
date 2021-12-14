@@ -5,9 +5,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './app';
 import {applyMiddleware, compose, createStore, Store} from "redux";
 import rootReducer from './redux/reducers/root-reducer';
-import {Provider} from "react-redux";
-import {BrowserRouter} from "react-router-dom";
-import {AppReducerState} from "./redux/reducers/app-reducer/app-reducer.interfaces";
+import {Provider} from 'react-redux';
+import {BrowserRouter} from 'react-router-dom';
+import {AppReducerState} from './redux/reducers/app-reducer/app-reducer.interfaces';
 
 export const composeEnhancers = (window && (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 

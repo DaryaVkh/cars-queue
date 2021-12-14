@@ -1,6 +1,6 @@
-import {AppAction} from "../../redux/reducers/app-reducer/app-reducer.interfaces";
+import {AppAction} from '../../redux/reducers/app-reducer/app-reducer.interfaces';
 
-export interface CarRecord {
+export interface Record {
     ownerName: string;
     ownerPhone: string;
     date: string;
@@ -13,9 +13,9 @@ export interface Schedule {
 }
 
 export interface AppStateProps {
-    days: Schedule,
-    activeQueue: CarRecord[],
-    passedQueue: CarRecord[]
+    schedule: Schedule,
+    activeRecords: Record[],
+    passedRecords: Record[]
 }
 
 export interface AppState {
@@ -23,8 +23,8 @@ export interface AppState {
 }
 
 export interface AppDispatchProps {
-    onGenerateOrUpdateDays: (days: Schedule) => AppAction;
-    onEndRecordTime: (record: CarRecord) => AppAction;
+    onGenerateOrUpdateSchedule: (newSchedule: Schedule) => AppAction;
+    onEndRecordTime: (record: Record) => AppAction;
 }
 
 export type AppProps = AppDispatchProps;

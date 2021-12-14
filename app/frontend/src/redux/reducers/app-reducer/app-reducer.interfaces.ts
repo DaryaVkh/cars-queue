@@ -1,12 +1,12 @@
-import {CarRecord, Schedule} from "../../../entitites/app/app.interfaces";
+import {Record, Schedule} from '../../../entitites/app/app.interfaces';
 
 export interface AppReducerState {
-    days: Schedule,
-    activeQueue: CarRecord[],
-    passedQueue: CarRecord[]
+    schedule: Schedule,
+    activeRecords: Record[],
+    passedRecords: Record[]
 }
 
 export interface AppAction {
     type: string;
-    payload: CarRecord | Schedule;
+    payload: Record | Schedule;
 }

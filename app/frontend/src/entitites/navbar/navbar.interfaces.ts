@@ -1,3 +1,3 @@
 export interface NavBarProps {
-    activePage: 'main' | 'active-queue' | 'passed';
+    activePage: 'main' | 'active-records' | 'passed-records';
 }
