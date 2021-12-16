@@ -89,15 +89,16 @@ const MainPage: FC<MainPageProps> = props => {
         let scheduleDay = new Date();
         const currentTimeHour: number = +scheduleDay.toTimeString().split(' ')[0].split(':')[0];
 
-        if (currentTimeHour > 18) {
+        if (currentTimeHour > 17) {
             scheduleDay.setDate(scheduleDay.getDate() + 1);
         }
+
         setMinDate(scheduleDay.toLocaleDateString('sv'));
         scheduleDay.setDate(scheduleDay.getDate() + 6);
         setMaxDate(scheduleDay.toLocaleDateString('sv'));
 
         scheduleDay = new Date();
-        if (currentTimeHour > 18) {
+        if (currentTimeHour > 17) {
             scheduleDay.setDate(scheduleDay.getDate() + 1);
         }
 

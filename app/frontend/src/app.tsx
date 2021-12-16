@@ -31,7 +31,7 @@ const App: FC<AppProps> = props => {
 
         let schedule: Schedule;
 
-        const isWorkDayEnded = currentTimeHour > 18;
+        const isWorkDayEnded = currentTimeHour > 17;
         const isWorkDayNotStarted = currentTimeHour < 9;
 
         if (isWorkDayEnded) {

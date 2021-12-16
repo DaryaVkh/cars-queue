@@ -21,7 +21,7 @@ const ActiveRecords: FC<ActiveRecordsProps> = props => {
         let today = new Date();
         const currentTimeHour: number = +today.toTimeString().split(' ')[0].split(':')[0];
 
-        if (currentTimeHour > 18) {
+        if (currentTimeHour > 17) {
             today.setDate(today.getDate() + 1);
         }
 
